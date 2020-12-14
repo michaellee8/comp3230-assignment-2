@@ -39,17 +39,35 @@ void startProduction(){
     pthread_create(&robotsA[i]->pthread, NULL, simpleRobotRoutine, robotsA[i]);
   }
   // TODO: create typeB and typeC robots
+  for (int i = 0; i < num_typeB; ++i) {
+    robotsB[i] = createRobot(TypeB);
+    robotsB[i]->task = task;
+    pthread_create(&robotsB[i]->pthread, NULL, simpleRobotRoutine, robotsB[i]);
+  }
+  for (int i = 0; i < num_typeC; ++i) {
+    robotsC[i] = createRobot(TypeC);
+    robotsC[i]->task = task;
+    pthread_create(&robotsC[i]->pthread, NULL, simpleRobotRoutine, robotsC[i]);
+  }
   
   // wait until work done
   for (int i = 0; i < num_typeA; ++i) {
     pthread_join(robotsA[i]->pthread, NULL);
   }
   // TODO: join typeB and typeC robot threads
+  for (int i = 0; i < num_typeB; ++i) {
+    pthread_join(robotsB[i]->pthread, NULL);
+  }
+  for (int i = 0; i < num_typeC; ++i) {
+    pthread_join(robotsC[i]->pthread, NULL);
+  }
 
   /* Production end */
 
   /* Release memory */
   for (int i = 0; i < num_typeA; ++i) releaseRobot(robotsA[i]); 
+  for (int i = 0; i < num_typeB; ++i) releaseRobot(robotsB[i]); 
+  for (int i = 0; i < num_typeC; ++i) releaseRobot(robotsC[i]); 
   queueDestroy(task->jobQ);
   free(task); 
   free(robotsA);
